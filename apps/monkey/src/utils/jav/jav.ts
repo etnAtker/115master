@@ -193,6 +193,10 @@ abstract class Jav {
     return undefined
   }
 
+  removeCache(avNumber: string) {
+    this.cache.remove(`${this.source}:${avNumber}`)
+  }
+
   /** 解析番号信息 */
   async parseInfo(html: string): Promise<JavInfo | undefined> {
     let dom = new DOMParser().parseFromString(html, 'text/html')

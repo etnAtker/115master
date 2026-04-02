@@ -32,15 +32,18 @@
 
         <div :class="styles.main.container">
           <div :class="styles.title.container">
-            <a
-              :href="extInfo.state.value?.detailUrl"
-              target="_blank"
-              :title="extInfo.state.value?.title"
-              :alt="extInfo.state.value?.title"
-              :class="styles.title.link"
-            >
-              {{ extInfo.state.value?.source }} {{ extInfo.state.value?.title }}
-            </a>
+            <span @click="removeCache">🔄</span>
+            <span>
+              <a
+                :href="extInfo.state.value?.detailUrl"
+                target="_blank"
+                :title="extInfo.state.value?.title"
+                :alt="extInfo.state.value?.title"
+                :class="styles.title.link"
+              >
+                {{ extInfo.state.value?.source }} {{ extInfo.state.value?.title }}
+              </a>
+            </span>
           </div>
 
           <div :class="styles.content.container">
@@ -181,7 +184,7 @@ const styles = clsx({
   },
   // 标题样式
   title: {
-    container: 'text-md ml-2 text-neutral-500',
+    container: 'text-md ml-2 flex text-neutral-500',
     link: 'hover:text-primary line-clamp-1 transition-colors hover:underline',
   },
   // 内容样式
@@ -212,7 +215,7 @@ const extInfoRefVisible = useElementVisibility(extInfoRef, {
 
 const extInfo = useAsyncState(
   async () => {
-    const javs = [javBus, javDB, missAV]
+    const javs = [javDB, javBus, missAV]
     for (const jav of javs) {
       const info = await jav.getInfoByCache(props.avNumber)
       if (info) {
@@ -239,6 +242,11 @@ const extInfo = useAsyncState(
     immediate: false,
   },
 )
+
+function removeCache() {
+  [javDB, javBus, missAV].forEach(jav => jav.removeCache(props.avNumber))
+  extInfo.execute()
+}
 
 watch(extInfoRefVisible, (visible) => {
   if (visible) {
